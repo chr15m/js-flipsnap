@@ -92,7 +92,7 @@ Flipsnap.prototype.init = function(element, opts) {
 	// set property
 	self.currentPoint = 0;
 	self.currentX = 0;
-	self.animation = false;
+	self.animation = null;
 	self.use3d = support.transform3d;
 	if (self.disable3d === true) {
 		self.use3d = false;
@@ -210,7 +210,7 @@ Flipsnap.prototype.toPrev = function(transitionDuration) {
 Flipsnap.prototype.moveToPoint = function(point, transitionDuration) {
 	var self = this;
 	
-	transitionDuration = transitionDuration == null ? self.transitionDuration : transitionDuration;
+	transitionDuration = (transitionDuration == null ? self.transitionDuration : transitionDuration);
 
 	var beforePoint = self.currentPoint;
 
@@ -233,7 +233,7 @@ Flipsnap.prototype.moveToPoint = function(point, transitionDuration) {
 		self._setStyle({ transitionDuration: transitionDuration });
 	}
 	else {
-		self.animation = true;
+		self.animation = transitionDuration;
 	}
 	self._setX(- self.currentPoint * self._distance);
 
@@ -250,8 +250,8 @@ Flipsnap.prototype._setX = function(x) {
 		self.element.style[ saveProp.transform ] = self._getTranslate(x);
 	}
 	else {
-		if (self.animation) {
-			self._animate(x, self.transitionDuration);
+		if (self.animation != null) {
+			self._animate(x, self.animation);
 		}
 		else {
 			self.element.style.left = x + 'px';
@@ -274,7 +274,7 @@ Flipsnap.prototype._touchStart = function(event) {
 		self._setStyle({ transitionDuration: '0ms' });
 	}
 	else {
-		self.animation = false;
+		self.animation = null;
 	}
 	self.scrolling = true;
 	self.moveReady = false;
@@ -393,7 +393,7 @@ Flipsnap.prototype._animate = function(x, transitionDuration) {
 	var begin = +new Date();
 	var from = parseInt(elem.style.left, 10);
 	var to = x;
-	var duration = transitionDuration;
+	var duration = parseInt(transitionDuration);
 	var easing = function(time, duration) {
 		return -(time /= duration) * (time - 2);
 	};
